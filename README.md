@@ -1,77 +1,100 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+# Technical Interview - PERN Developer
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+## User Stories
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+**Note:** Leverage on Firebase Auth to achieve the following requirements using the mentioned tech stack.
 
-## Description
+- **As a Public User**
+    - I want to be able to register myself via username and password
+    - I expect that, upon successful creation, a local database should store a record referencing uid, latestLogin, and soft delete
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+- **As a Member**
+    - I want to be able to authenticate myself via username and password to access the home screen
 
-## Installation
+- **As a Public User**
+    - I should be redirected from the home screen to the login screen when I am not authenticated
 
-```bash
-$ npm install
+- **As a Public User and Member**
+    - I want the portal to be mobile-responsive for easy viewing on my phone
+
+## Bonus
+
+Showcase your knowledge and capabilities by attempting the following bonus features:
+
+- Use of containerization technology
+- Coverage of as many alternate / exceptional flows as possible
+
+
+# Submission for Backend
+> To follow the best practice for CI/CD deployment, submission is separated between frontend and backend
+
+## Key Assumptions
+- Authentication is fully handled by firebase, we want the system in high availability so that any exception when storing user `last login` activity in our backend will not interrupt the user experience.
+
+## 
+### Register
+```mermaid
+sequenceDiagram
+    
+participant Client
+participant UserService
+participant DB
+participant FirebaseService
+
+Client->>UserService: register(uid)
+UserService->>FirebaseService: getAuth().getUser(uid)
+alt User found in Firebase
+    FirebaseService->>UserService: return true
+    UserService->>DB: createAndSaveUser(user uid)
+    DB->>UserService: return User
+    UserService->>Client: return User
+else User not found in Firebase
+    FirebaseService->>UserService: throw Error
+    UserService->>Client: throw BadRequestException
+end
+```
+### Login
+```mermaid
+sequenceDiagram
+    
+participant Client
+participant UserService
+participant DB
+participant FirebaseService
+
+    Client->>UserService: saveLogin(uid)
+    UserService->>DB: findOne(User, { uid })
+    alt User found in DB
+        DB->>UserService: return User
+        UserService->>DB: updateUser() //update latestLogin
+        DB->UserService: return User
+        UserService->>Client: return User
+    else User not found in DB
+        UserService->>FirebaseService: getAuth().getUser(uid)
+        alt User found in Firebase
+            FirebaseService->>UserService: return true
+            UserService->>DB: createAndSaveUser(uid)
+            DB->>UserService: return User
+            UserService->>Client: return User
+        else User not found in Firebase
+            FirebaseService->>UserService: throw Error
+            UserService->>Client: throw NotFoundException
+        end
+    end
 ```
 
-## Running the migration
-```bash
-npx mikro-orm migration:up
-```
-## Running the app
+# Run application
+## Prerequisite
+1. `node` - version 20
+2. `docker` - for building docker images (can be installed with docker desktop).
+3. `docker-compose` - for setting/spinning up dev https://docs.docker.com/compose/install/
 
-```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
-```
-
-## Test
-
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
-```
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](LICENSE).
+## Running in docker
+1. Build image and spin up docker container
+    ```bash
+    docker-compose up --build
+    ```
+2. Run the migration
+   ```
+   npx mikro-orm migration:up
+   ```
