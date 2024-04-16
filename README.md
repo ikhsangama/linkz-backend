@@ -28,6 +28,10 @@ Showcase your knowledge and capabilities by attempting the following bonus featu
 # Submission for Backend
 > To follow the best practice for CI/CD deployment, submission is separated between frontend and backend
 
+> https://github.com/ikhsangama/linkz-backend
+
+> https://github.com/ikhsangama/linkz-frontend
+
 ## Key Assumptions
 - Authentication is fully handled by firebase, we want the system in high availability so that any exception when storing user `last login` activity in our backend will not interrupt the user experience.
 
