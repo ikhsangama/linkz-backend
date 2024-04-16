@@ -11,7 +11,7 @@ const config: Options = {
   port: process.env.DB_PORT ? Number(process.env.DB_PORT) : 5432,
   user: process.env.DB_USER || 'user',
   password: process.env.DB_PASSWORD || 'password',
-  dbName: 'linkz',
+  dbName: process.env.DB_DATABASE || 'linkz',
   migrations: {
     tableName: 'mikro_orm_migrations',
     pathTs: './migrations',

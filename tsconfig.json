@@ -18,6 +18,8 @@
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
 //    addition mikroORM
-    "esModuleInterop": true
+    "esModuleInterop": true,
+//    firebase cert
+    "resolveJsonModule": true
   }
 }
