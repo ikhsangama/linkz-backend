@@ -1,0 +1,23 @@
+services:
+  db:
+    platform: linux/x86_64
+    image: postgres:14.1-alpine
+    restart: on-failure
+    container_name: 'linkz'
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_DATABASE}
+    ports:
+      - 5432:5432
+    volumes:
+      - ./tmp/postgres-data:/var/lib/postgresql/data/
+#      - ./database.sql:/docker-entrypoint-initdb.d/database.sql
+    networks: [ 'linkz' ]
+
+volumes:
+  db:
+    driver: local
+networks:
+  linkz:
+    driver: bridge
