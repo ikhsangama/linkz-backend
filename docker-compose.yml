@@ -1,9 +1,10 @@
+version: '3.8'
 services:
   db:
     platform: linux/x86_64
     image: postgres:14.1-alpine
     restart: on-failure
-    container_name: 'linkz'
+    container_name: 'linkz-db'
     environment:
       POSTGRES_USER: ${DB_USER}
       POSTGRES_PASSWORD: ${DB_PASSWORD}
@@ -12,7 +13,23 @@ services:
       - 5432:5432
     volumes:
       - ./tmp/postgres-data:/var/lib/postgresql/data/
-#      - ./database.sql:/docker-entrypoint-initdb.d/database.sql
+    networks: [ 'linkz' ]
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: 'linkz-app'
+    depends_on:
+      - db
+    ports:
+      - 3000:3000
+    environment:
+      - DB_HOST=db
+      - DB_PORT=${DB_PORT}
+      - DB_USER=${DB_USER}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_DATABASE=${DB_DATABASE}
     networks: [ 'linkz' ]
 
 volumes:
