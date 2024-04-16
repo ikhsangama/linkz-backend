@@ -100,6 +100,6 @@ participant FirebaseService
     docker-compose up --build
     ```
 2. Run the migration
-   ```
+   ```bash
    npx mikro-orm migration:up
    ```
