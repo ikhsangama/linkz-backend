@@ -31,7 +31,12 @@ Showcase your knowledge and capabilities by attempting the following bonus featu
 ## Key Assumptions
 - Authentication is fully handled by firebase, we want the system in high availability so that any exception when storing user `last login` activity in our backend will not interrupt the user experience.
 
-## 
+## Out of Scope
+1. **Advanced User Functionalities**: Any advanced functionalities for users beyond registration, login, and redirection, such as profile editing, inbox messaging, friendship systems, etc., could be considered out of scope as they're not mentioned in the project brief
+2. **Third Party Services Integration**: Although Firebase Authentication is required, integrating more services such as Firebase Cloud Messaging or other third-party services might be considered out of scope unless explicitly requested.
+3. **Advanced UI/UX Design**: While the project needs to be mobile responsive, detailed UI/UX design, animation, and complex interactivity may be outside the scope of this project.
+
+## Sequence Diagram
 ### Register
 ```mermaid
 sequenceDiagram
