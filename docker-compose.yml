@@ -15,13 +15,22 @@ services:
       - ./tmp/postgres-data:/var/lib/postgresql/data/
     networks: [ 'linkz' ]
 
+  db-is-ready: &db-is-ready
+    image: wait-for-it
+    build:
+      context: ./misc/docker/wait-for-it/
+    command: [ "/wait-for-it.sh", "db:5432", "--", "echo", "alive"]
+    depends_on:
+      - db
+    networks: [ "linkz" ]
+
   app:
     build:
       context: .
       dockerfile: Dockerfile
     container_name: 'linkz-app'
     depends_on:
-      - db
+      - db-is-ready
     ports:
       - 3000:3000
     environment:
